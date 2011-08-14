@@ -47,9 +47,17 @@ service = build(serviceName='tasks', version='v1', http=http,
 
 tasklists = service.tasklists().list().execute()
 
+print "Task Lists:"
 for tasklist in tasklists['items']:
-    for k in tasklist.keys():
-        print "%s :: %s" % (k,tasklist[k])
+    print tasklist['title']
+    #for k in tasklist.keys():
+    #    print "%s :: %s" % (k,tasklist[k])
 
+print ""
 
+tasks = service.tasks().list(tasklist='@default').execute()
+
+print "Tasks:"
+for task in tasks['items']:
+      print task['title']
 
