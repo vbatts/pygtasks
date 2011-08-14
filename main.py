@@ -22,7 +22,7 @@ FLOW = OAuth2WebServerFlow(
     user_agent='pygtasks/1.0')
 
 # To disable the local server feature, uncomment the following line:
-# FLAGS.auth_local_webserver = False
+FLAGS.auth_local_webserver = False
 
 # If the Credentials don't exist or are invalid, run through the native client
 # flow. The Storage object will ensure that if successful the good
@@ -42,4 +42,14 @@ http = credentials.authorize(http)
 # to get a developerKey for your own application.
 service = build(serviceName='tasks', version='v1', http=http,
        developerKey='AIzaSyCcyk3MXrc6F3He95D5tULGigJ06AYZA2w')
+
+
+
+tasklists = service.tasklists().list().execute()
+
+for tasklist in tasklists['items']:
+    for k in tasklist.keys():
+        print "%s :: %s" % (k,tasklist[k])
+
+
 
