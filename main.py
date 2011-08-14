@@ -15,7 +15,8 @@ if os.path.exists(fpath):
     sys.path.insert(0,fpath)
 
 # Our local configuration handler
-import pygtasks
+from pygtasks.config import pygconfig
+from pygtasks.client import pygclient
 
 # These are from the apiclient in samples/ of the google-api-python-client
 import gflags
@@ -32,6 +33,9 @@ except:
     exit(2)
 
 
+p_config = pygconfig()
+
+
 FLAGS = gflags.FLAGS
 
 # Set up a Flow object to be used if we need to authenticate. This
@@ -42,18 +46,18 @@ FLAGS = gflags.FLAGS
 # The client_id and client_secret are copied from the API Access tab on
 # the Google APIs Console
 FLOW = OAuth2WebServerFlow(
-    client_id='564420396984.apps.googleusercontent.com',
-    client_secret='NV4gpnRS1Qh5UsGNuVIOMjC9',
+    client_id = p_config.api_get('client_id'),
+    client_secret = p_config.api_get('client_secret'),
     scope='https://www.googleapis.com/auth/tasks',
-    user_agent='pygtasks/1.0')
+    user_agent= p_config.api_get('user_agent'))
 
 # To disable the local server feature, uncomment the following line:
-# FLAGS.auth_local_webserver = False
+FLAGS.auth_local_webserver = p_config.configp.getboolean('client','auth_local_webserver')
 
 # If the Credentials don't exist or are invalid, run through the native client
 # flow. The Storage object will ensure that if successful the good
 # Credentials will get written back to a file.
-storage = Storage('tasks.dat')
+storage = Storage(p_config.client_get('storage_file'))
 credentials = storage.get()
 if credentials is None or credentials.invalid == True:
   credentials = run(FLOW, storage)
@@ -67,9 +71,11 @@ http = credentials.authorize(http)
 # the Google APIs Console
 # to get a developerKey for your own application.
 service = build(serviceName='tasks', version='v1', http=http,
-       developerKey='AIzaSyCcyk3MXrc6F3He95D5tULGigJ06AYZA2w')
+       developerKey = p_config.api_get('developerKey'))
 
 
+
+## Main
 
 tasklists = service.tasklists().list().execute()
 
@@ -86,4 +92,5 @@ tasks = service.tasks().list(tasklist='@default').execute()
 print "Tasks:"
 for task in tasks['items']:
       print task['title']
+
 

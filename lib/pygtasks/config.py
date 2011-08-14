@@ -6,9 +6,10 @@
 
 import os, sys
 import ConfigParser
+
 DEFAULT = {
-        'name': 'pygtask.cfg',
-        'path': os.path.join(os.getenv('HOME'),'.config/pygtask'),
+        'name': 'pygtasks.cfg',
+        'path': os.path.join(os.getenv('HOME'),'.config/pygtasks'),
         'config': {
             'api': {
                 'client_id': 'YOUR_CLIENT_ID',
@@ -17,57 +18,78 @@ DEFAULT = {
                 'developerKey': 'YOUR_DEVELOPER_KEY'
                 },
             'client': {
-                'storage_file': 'store.dat'
+                'storage_file': 'tasks.dat',
+                'auth_local_webserver': 'False'
                 }
             }
         }
-
-
-def makeNewConfig( file = os.path.join(DEFAULT['path'], DEFAULT['name']) ):
-    if not(os.path.exists(DEFAULT['path'])):
-        os.makedirs(DEFAULT['path'])
-    elif os.path.exists(file):
-        sys.stderr.write("WARNING: %s already exists! please move it first"
-                % file)
-        return False
-
-
-    f_new = open(file, 'wb')
     
-    for section in DEFAULT['config'].keys():
-        ## FIXME 
-        # f_new.write(blah + '\n')
-        for key in DEFAULT['config'][section]:
-            ## FIXME 
-            # f_new.write(blah + '\n')
+
+class pygconfig(object):
+    
+    def __init__(self, cfg_file = os.path.join(DEFAULT['path'], DEFAULT['name']) ):
+        self.configp = ConfigParser.ConfigParser()
+
+        if not(os.path.exists(cfg_file)):
+            if self.__makeNewConfig(cfg_file):
+                self.__showApiHelp(cfg_file)
+        else:
+            ## TODO maybe do a simple check ?
             None
-        
-    f_new.close()
 
-    return True
-        
+        ## TODO or maybe have a hash that is used in the interpolation ?
+        self.configp.read(cfg_file)
 
-def showApiHelp(file = os.path.join(DEFAULT['path'], DEFAULT['name']) ):
-    sys.stderr.write('''
+    def get(self, section, key):
+        try:
+            return self.configp.get(section, key)
+        except ConfigParser.NoOptionError:
+            return False
+        except ConfigParser.NoSectionError:
+            return False
+
+    def api_get(self, key):
+        return self.get("api", key)
+
+    def client_get(self, key):
+        return self.get("client", key)
+
+    
+    def __makeNewConfig(self, file = os.path.join(DEFAULT['path'], DEFAULT['name']) ):
+        cp = ConfigParser.ConfigParser()
+    
+        if not(os.path.exists(DEFAULT['path'])):
+            os.makedirs(DEFAULT['path'])
+        elif os.path.exists(file):
+            sys.stderr.write("WARNING: %s already exists! please move it first"
+                    % file)
+            return False
+        
+        # Build up the configuration file from DEFAULT
+        for section in DEFAULT['config'].keys():
+            cp.add_section(section)
+            for key in DEFAULT['config'][section]:
+                cp.set(section, key, DEFAULT['config'][section][key])
+            
+        with open(file, 'wb') as configfile:
+            cp.write(configfile)
+    
+        return True
+            
+    
+    def __showApiHelp(self, file = os.path.join(DEFAULT['path'], DEFAULT['name']) ):
+        sys.stderr.write('''
 INFO: Before pygtasks can operate, the client id and secret must
 INFO: registered as an application. Please see the Google APIs console
 INFO: and register a new 'project'
 INFO: https://code.google.com/apis/console/
 INFO: 
+INFO: P.S. the "developerKey", is the "API key" from the Google API console
+INFO: 
 INFO: After that, update the information stored in %s
 ''' % file)
-    return None
-
-
-
-class pygconfig(object):
+        return None
     
-    def __init__(self, file = os.path.join(DEFAULT['path'], DEFAULT['name']) ):
-        self.configp = ConfigParser.ConfigParser()
-
-        if not(os.path.exists(file)):
-            if makeNewConfig(file):
-                showApiHelp(file)
 
 
 
