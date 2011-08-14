@@ -13,7 +13,7 @@ if os.path.exists(fpath):
     sys.path.insert(0,fpath)
 
 # Our local configuration handler
-import pygconfig
+from pygtasks.config import pygconfig
 
 # These are from the apiclient in samples/ of the google-api-python-client
 import httplib2
@@ -30,8 +30,10 @@ except:
 def transText(i):
     return i[u'translatedText']
 
+p_config = pygconfig()
+
 service = build('translate', 'v2', 
-        developerKey='AIzaSyCcyk3MXrc6F3He95D5tULGigJ06AYZA2w')
+        developerKey=p_config.api_get('developerKey'))
 
 if len(sys.argv) > 1:
     args = sys.argv
