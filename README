@@ -1,12 +1,54 @@
-This utility uses the google-api-python-client. You can fetch
-it from http://code.google.com/p/google-api-python-client/
+DESCRIPTION:
+ pygtasks is presently a very simple tool, that shows your Google tasks
 
-Developers guide, that is the current reference point:
- * http://code.google.com/apis/tasks/v1/using.html
- * http://code.google.com/apis/tasks/v1/getting_started.html
+TODO:
+ * Move the client functions into the pygclient class
+ * describe 'tasks' and 'tasklists' into more of a class/module 
+ * implement a 'setup.py' so that this project can be packagable
+ * build out the features of a task
+ ** add
+ ** del
+ ** complete
+ ** indent
+ ** reorder
+ ** schedule
+ ** notes
+ * ultimately:
+ ** do some level of caching/synchronizing
 
-Google APIs console:
- * https://code.google.com/apis/console/
+GETTING STARTED:
+ * Install google-api-python-client
+   ( if you a slackware user, I have a SlackBuild at
+     https://github.com/vbatts/SlackBuilds/tree/master/google-api-python-client )
+ * Run the commands
+ $> git clone git://github.com/vbatts/pygtasks.git
+ $> cd pygtasks
+ $> python main.py
 
-Any code that is not governed by its own license, will be cover
-by the license described in LICENSE.
+ * The first run of this will create the file ~/.config/pygtasks/pygtasks.cfg
+   with bunk data
+ * Go create (for yourself) an application "project" at the Google API Console
+ ** Services - "Tasks API" (and if you want to play with the translate_text.py, then "Translate API" as well)
+ ** API Access
+ *** Click "Create an OAuth 2.0 client ID" button
+ *** Product name "pygtasks" -> Next button
+ *** Choose "Installed Application" -> Create client ID button
+ ** Use the API Acces information to update pygtasks.cfg
+   
+ P.S. the "developerKey" needed, is the "API KEY"
+
+NOTES:
+ This utility uses the google-api-python-client. You can fetch
+ it from http://code.google.com/p/google-api-python-client/
+ 
+ Developers guide, that is the current reference point:
+  * http://code.google.com/apis/tasks/v1/using.html
+  * http://code.google.com/apis/tasks/v1/getting_started.html
+ 
+ Google APIs console:
+  * https://code.google.com/apis/console/
+ 
+LICENSE:
+ Any code that is not governed by its own license, will be cover
+ by the license described in the LICENSE file.
+
