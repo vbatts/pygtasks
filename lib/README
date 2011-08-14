@@ -1,0 +1,7 @@
+NOTICE:
+ The following were copied directly from the 
+google-api-python-client-1.0beta2/samples/api-python-client-doc/ :
+* gflags.py 
+* gflags_validators.py 
+* httplib2/
+
