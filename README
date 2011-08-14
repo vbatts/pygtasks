@@ -5,6 +5,8 @@ Developers guide, that is the current reference point:
  * http://code.google.com/apis/tasks/v1/using.html
  * http://code.google.com/apis/tasks/v1/getting_started.html
 
+Google APIs console:
+ * https://code.google.com/apis/console/
 
 Any code that is not governed by its own license, will be cover
 by the license described in LICENSE.

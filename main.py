@@ -1,10 +1,36 @@
+#!/usr/bin/env python
+# pygtasks (Python Google Task client)
+#
+# Copyright 2011  Vincent Batts, Vienna, VA, USA
+# 
+# See LICENSE
+#
+
+
+import sys, os
+
+# Setup our path, if this is running from the src directory
+fpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),"lib")
+if os.path.exists(fpath):
+    sys.path.insert(0,fpath)
+
+# Our local configuration handler
+import pygtasks
+
+# These are from the apiclient in samples/ of the google-api-python-client
 import gflags
 import httplib2
 
-from apiclient.discovery import build
-from oauth2client.file import Storage
-from oauth2client.client import OAuth2WebServerFlow
-from oauth2client.tools import run
+try:
+    from apiclient.discovery import build
+    from oauth2client.file import Storage
+    from oauth2client.client import OAuth2WebServerFlow
+    from oauth2client.tools import run
+except:
+    print "ERROR: google-api-python-client libraries are needed"
+    print "ERROR: please visit http://code.google.com/p/google-api-python-client/"
+    exit(2)
+
 
 FLAGS = gflags.FLAGS
 
@@ -22,7 +48,7 @@ FLOW = OAuth2WebServerFlow(
     user_agent='pygtasks/1.0')
 
 # To disable the local server feature, uncomment the following line:
-FLAGS.auth_local_webserver = False
+# FLAGS.auth_local_webserver = False
 
 # If the Credentials don't exist or are invalid, run through the native client
 # flow. The Storage object will ensure that if successful the good
