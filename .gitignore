@@ -2,3 +2,5 @@ tasks.dat
 *~
 .*.swp
 *.pyc
+.project
+.pydevproject

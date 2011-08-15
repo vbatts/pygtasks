@@ -26,7 +26,17 @@ DEFAULT = {
     
 
 class pygconfig(object):
+    '''
+    This class represents the getter for accessing configurations. 
     
+    When initialized, it currently defaults to ~/.config/pygtasks/pygtasks.cfg
+    If the file path does not exist, then a rough template is created, but 
+    it requires modification by the user, and therefor notifies them of such.
+    
+
+    For hacking sake, it *could* be overrided.
+    
+    '''
     def __init__(self, cfg_file = os.path.join(DEFAULT['path'], DEFAULT['name']) ):
         self.configp = ConfigParser.ConfigParser()
 
