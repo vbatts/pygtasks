@@ -36,7 +36,7 @@ except:
 
 # We'll put this first, so we can parse before constructing the [would be] client
 parser = OptionParser()
-parser.add_option("-l", "--list", dest="list",
+parser.add_option("-l", "--list", dest="selectedlist",
                  action="store", type="string", help="Select List")
 parser.add_option("-c", "--color", dest="color", default="False",
                  action="store_true", help="Colored Output")
@@ -87,8 +87,6 @@ service = build(serviceName='tasks', version='v1', http=http,
 
 ## Main
 
-tasklists = service.tasklists().list().execute()
-
 normal = '\033[1;m'
 bcyan = normal
 cyan = normal
@@ -97,21 +95,22 @@ if options.color == True:
     bcyan = '\033[1;36m'
     cyan = '\033[0;36m'
 
-if options.list == None:
+tasklists = service.tasklists().list().execute()
+
+if options.selectedlist == None:
     print bcyan + 'Task Lists:' + normal
+
 for tasklist in tasklists['items']:
-    if options.list == None:
+    if options.selectedlist == None:
+        print
         print cyan + tasklist['title'] + normal
-    #for k in tasklist.keys():
-    #    print "%s :: %s" % (k,tasklist[k])
 
-if options.list == None:
-    print ""
+    if options.selectedlist == tasklist['title'] or options.selectedlist == None:
+        tasks = service.tasks().list(tasklist=tasklist['id']).execute()
 
-tasks = service.tasks().list(tasklist='@default').execute()
+        print cyan + "Tasks:" + normal
+        for task in tasks['items']:
+            print task['title']
 
-print cyan + "Tasks:" + normal
-for task in tasks['items']:
-      print task['title']
 
 
