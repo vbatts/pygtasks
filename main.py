@@ -42,6 +42,7 @@ parser.add_option("-c", "--color", dest="color", default="False",
                  action="store_true", help="Colored Output")
 (options, args) = parser.parse_args()
 
+# Setup the configuration getter
 p_config = pygconfig()
 
 
