@@ -8,6 +8,7 @@
 
 
 import sys, os
+from optparse import OptionParser
 
 # Setup our path, if this is running from the src directory
 fpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),"lib")
@@ -27,11 +28,19 @@ try:
     from oauth2client.file import Storage
     from oauth2client.client import OAuth2WebServerFlow
     from oauth2client.tools import run
+
 except:
     print "ERROR: google-api-python-client libraries are needed"
     print "ERROR: please visit http://code.google.com/p/google-api-python-client/"
     exit(2)
 
+# We'll put this first, so we can parse before constructing the [would be] client
+parser = OptionParser()
+parser.add_option("-l", "--list", dest="list",
+                 action="store", type="string", help="Select List")
+parser.add_option("-c", "--color", dest="color", default="False",
+                 action="store_true", help="Colored Output")
+(options, args) = parser.parse_args()
 
 p_config = pygconfig()
 
@@ -79,17 +88,28 @@ service = build(serviceName='tasks', version='v1', http=http,
 
 tasklists = service.tasklists().list().execute()
 
-print "Task Lists:"
+normal = '\033[1;m'
+bcyan = normal
+cyan = normal
+
+if options.color == True:
+    bcyan = '\033[1;36m'
+    cyan = '\033[0;36m'
+
+if options.list == None:
+    print bcyan + 'Task Lists:' + normal
 for tasklist in tasklists['items']:
-    print tasklist['title']
+    if options.list == None:
+        print cyan + tasklist['title'] + normal
     #for k in tasklist.keys():
     #    print "%s :: %s" % (k,tasklist[k])
 
-print ""
+if options.list == None:
+    print ""
 
 tasks = service.tasks().list(tasklist='@default').execute()
 
-print "Tasks:"
+print cyan + "Tasks:" + normal
 for task in tasks['items']:
       print task['title']
 
