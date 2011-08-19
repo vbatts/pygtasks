@@ -26,9 +26,9 @@ import sys, os
 from optparse import OptionParser
 
 # Setup our path, if this is running from the src directory
-#fpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),"../lib")
-#if os.path.exists(fpath):
-#    sys.path.insert(0,fpath)
+fpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),"../lib")
+if os.path.exists(fpath):
+    sys.path.insert(0,fpath)
 
 # Our local configuration handler
 from pygtasks.config import pygconfig
