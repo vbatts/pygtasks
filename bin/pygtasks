@@ -22,7 +22,8 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-import sys, os
+import sys
+import os
 from optparse import OptionParser
 
 # Setup our path, if this is running from the src directory
@@ -31,8 +32,8 @@ if os.path.exists(fpath):
     sys.path.insert(0,fpath)
 
 # Our local configuration handler
-from pygtasks.config import pygconfig
-from pygtasks.client import pygclient
+from pygtasks.pygconfig import pygconfig
+from pygtasks.pygclient import pygclient
 
 # These are from the apiclient in samples/ of the google-api-python-client
 import gflags

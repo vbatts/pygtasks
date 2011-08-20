@@ -12,12 +12,12 @@ __license__ = "MIT"
 
 
 try:
-    from pygtasks.config import pygconfig
+    from pygtasks.pygconfig import pygconfig
 except ImportError: 
     pygconfig = None
 
 try:
-    from pygtasks.client import pygclient
+    from pygtasks.pygclient import pygclient
 except ImportError: 
     pygclient = None
 

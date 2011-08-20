@@ -12,7 +12,7 @@ setup (name              = "pygtasks",
        platforms         = ['Any'],
        packages          = ['pygtasks','httplib2'],
        py_modules        = ['gflags','gflags_validators'],
-       scripts           = ['bin/pygtasks.py','bin/translate_text.py'],
+       scripts           = ['bin/pygtasks','bin/translate_text'],
        package_dir       = {'': 'lib/'},
        )
 
