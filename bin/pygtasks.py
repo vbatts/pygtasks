@@ -114,18 +114,16 @@ tasklists = service.tasklists().list().execute()
 
 if options.selectedlist == None:
     print bcyan + 'Task Lists:' + normal
+    print
 
 for tasklist in tasklists['items']:
-    if options.selectedlist == None:
-        print
-        print cyan + tasklist['title'] + normal
 
     if options.selectedlist == tasklist['title'] or options.selectedlist == None:
         tasks = service.tasks().list(tasklist=tasklist['id']).execute()
+        print cyan + tasklist['title'] + normal
 
-        print cyan + "Tasks:" + normal
         for task in tasks['items']:
             print task['title']
 
-
+    print
 
