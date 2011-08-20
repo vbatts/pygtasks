@@ -58,3 +58,7 @@ else
 fi
 cd -
 
+# I may change this later, but I don't care to leave this laying around for now
+[[ -d tmp ]] && rm -rf tmp/
+[[ -d build ]] && rm -rf build/
+
