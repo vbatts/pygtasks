@@ -35,7 +35,8 @@ if [ -z "$ARCH" ]; then
   esac
 fi
 
-PKG=$(pwd)/tmp
+CWD=$(pwd)
+PKG=$CWD/tmp
 IS_SLACK=false
 MAKEPKG="/sbin/makepkg"
 FAKEROOT="/usr/bin/fakeroot"
@@ -51,9 +52,9 @@ python setup.py install --root $PKG
 
 cd $PKG
 if $IS_SLACK ; then
-	$FAKEROOT $MAKEPKG -l y -c y ../$PRGNAM-$VERSION-$ARCH-${BUILD}_${TAG}.${PKGTYPE:-tgz}
+	$FAKEROOT $MAKEPKG -l y -c y ${CWD}/$PRGNAM-$VERSION-$ARCH-${BUILD}_${TAG}.${PKGTYPE:-tgz}
 else
-	tar czvf ../$PRGNAM-$VERSION-$ARCH-${BUILD}_${TAG}.${PKGTYPE:-tgz}
+	tar czvf ${CWD}/$PRGNAM-$VERSION-$ARCH-${BUILD}_${TAG}.${PKGTYPE:-tgz}
 fi
 cd -
 
