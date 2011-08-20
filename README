@@ -4,7 +4,7 @@ DESCRIPTION:
 TODO:
  * Move the client functions into the pygclient class
  * describe 'tasks' and 'tasklists' into more of a class/module 
- * implement a 'setup.py' so that this project can be packagable
+ * figure out why the import's are not working sanely from /usr/bin
  * build out the features of a task
  ** add
  ** del
@@ -23,7 +23,7 @@ GETTING STARTED:
  * Run the commands
  $> git clone git://github.com/vbatts/pygtasks.git
  $> cd pygtasks
- $> python main.py
+ $> python bin/pygtasks.py
 
  * The first run of this will create the file ~/.config/pygtasks/pygtasks.cfg
    with bunk data
