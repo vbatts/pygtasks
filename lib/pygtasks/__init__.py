@@ -17,6 +17,11 @@ except ImportError:
     pygconfig = None
 
 try:
+    from pygtasks.pygservice import pygservice
+except ImportError: 
+    pygservice = None
+
+try:
     from pygtasks.pygclient import pygclient
 except ImportError: 
     pygclient = None
