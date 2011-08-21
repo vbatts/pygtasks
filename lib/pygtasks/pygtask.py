@@ -34,9 +34,22 @@
 '''
 class pygtask(object):
     __attrs = {}
+    __keys = ['id','kind','position','notes','selfLink',
+              'status','title','due','updated','parent']
 
     def __init__(self, gtask=None, options={}):
+        if ((gtask != None) and (type(gtask == dict))):
+            for key in gtask.keys():
+                if key not in self.__keys: next
+
+                self.__set_attr(key, gtask[key])
+
+        # XXX this is a stub
         None
+
+    # Simple return of "id"
+    def id(self):
+        return self.__get_attr(u'id')
 
     # Simple return of "kind"
     def kind(self):
@@ -81,4 +94,7 @@ class pygtask(object):
         else:
             return None
 
+    # An internal setter
+    def __set_attr(self, key, value):
+        self.__attrs[key] = value
 
