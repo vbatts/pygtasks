@@ -25,7 +25,7 @@ import gflags
 import httplib2
 
 class pygclient(object):
-    def __init__(self, options):
+    def __init__(self, options={}):
         None
 
 

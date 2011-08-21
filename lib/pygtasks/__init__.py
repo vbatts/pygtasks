@@ -12,6 +12,11 @@ __license__ = "MIT"
 
 
 try:
+    from pygtasks.pygtask import pygtask
+except ImportError: 
+    pygtask = None
+
+try:
     from pygtasks.pygconfig import pygconfig
 except ImportError: 
     pygconfig = None
