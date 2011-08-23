@@ -111,7 +111,8 @@ if __name__ == '__main__':
             for task in tasks['items']:
                 # XXX vbatts hacking
                 if options.debug == True: tasks_array.append(pygtask(task))
-                print task['title']
+                if task['title'] != '':
+                    print task['title']
     
             if options.debug == True: pp.pprint(tasks_array)
 
