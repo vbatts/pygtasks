@@ -42,8 +42,11 @@ from pygtasks import pygtask
 
 # We'll put this first, so we can parse before constructing the [would be] client
 parser = OptionParser()
-parser.add_option("-l", "--list", dest="selectedlist",
-                 action="store", type="string", help="Select List")
+parser.add_option("-L", dest="showLists", default="False",
+                 action="store_true", help="Display the task lists available")
+parser.add_option("-l", "--list", dest="selectedList", default="False",
+                 action="store", type="string", help="Select List. Use -L to see lists available,\
+		 or say \"all\" to view everything. Default is your default task list.")
 parser.add_option("-c", "--color", dest="color", default="False",
                  action="store_true", help="Colored Output")
 parser.add_option("-d", "--debug", dest="debug", default="False",
@@ -54,6 +57,12 @@ parser.add_option("-d", "--debug", dest="debug", default="False",
 service = pygservice().start()
 
 ##== Main
+
+def get_tasklist_id_by_title(items, title):
+    for item in items:
+        if item['title'] == title:
+            return item['id']
+
 
 if __name__ == '__main__':
     normal = '\033[1;m'
@@ -91,30 +100,59 @@ if __name__ == '__main__':
                       u'due': u'2011-09-07T00:00:00.000Z',
                       u'updated': u'2011-08-14T15:55:36.625Z'}
     '''
-    tasklists = service.tasklists().list().execute()
-    if options.debug == True: pp.pprint(tasklists)
-    
-    if options.selectedlist == None:
-        print bcyan + 'Task Lists:' + normal
-        print
-    
-    for tasklist in tasklists['items']:
-    
-        if options.selectedlist == tasklist['title'] or options.selectedlist == None:
-            tasks = service.tasks().list(tasklist=tasklist['id']).execute()
-            if options.debug == True: pp.pprint(tasks)
 
-            print cyan + tasklist['title'] + normal
+
+    # Default is to show @default list
+    if ((options.selectedList == "False") and (options.showLists == "False")):
+        # Get the default list
+        tasklist = service.tasklists().get(tasklist='@default').execute()
+        if options.debug == True: pp.pprint(tasklist)
+
+        tasks = service.tasks().list(tasklist=tasklist['id']).execute()
+        if options.debug == True: pp.pprint(tasks)
+
+        print cyan + tasklist['title'] + normal
     
+        # XXX vbatts hacking
+        if options.debug == True: tasks_array = []
+        for task in tasks['items']:
             # XXX vbatts hacking
-            if options.debug == True: tasks_array = []
-            for task in tasks['items']:
-                # XXX vbatts hacking
-                if options.debug == True: tasks_array.append(pygtask(task))
-                if task['title'] != '':
-                    print task['title']
+            if options.debug == True: tasks_array.append(pygtask(task))
+            if task['title'] != '':
+                print task['title']
     
-            if options.debug == True: pp.pprint(tasks_array)
+        if options.debug == True: pp.pprint(tasks_array)
+    else:
+        # Print a list header
+        if options.selectedList == "all" or options.showLists == True:
+            print bcyan + 'Task Lists:' + normal
+            print
+    
+        # Get the list
+        tasklists = service.tasklists().list().execute()
+        if options.debug == True: pp.pprint(tasklists)
 
-        print
+        # Otherwise, iterate
+        for tasklist in tasklists['items']:
+            if options.showLists == True:
+                print cyan + '"' + tasklist['title'] + '"' + normal
+                continue
+    
+            if options.selectedList == tasklist['title'] or options.selectedList == "all":
+                tasks = service.tasks().list(tasklist=tasklist['id']).execute()
+                if options.debug == True: pp.pprint(tasks)
+
+                print cyan + tasklist['title'] + normal
+    
+                # XXX vbatts hacking
+                if options.debug == True: tasks_array = []
+                for task in tasks['items']:
+                # XXX vbatts hacking
+                    if options.debug == True: tasks_array.append(pygtask(task))
+                    if task['title'] != '':
+                        print task['title']
+    
+                if options.debug == True: pp.pprint(tasks_array)
+
+            print
 
