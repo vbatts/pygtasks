@@ -101,6 +101,10 @@ if __name__ == '__main__':
                       u'updated': u'2011-08-14T15:55:36.625Z'}
     '''
 
+    # TODO XXX
+    # * move this into a class
+    # * implement templates for the output
+    # http://docs.python.org/library/string.html#template-strings
 
     # Default is to show @default list
     if ((options.selectedList == "False") and (options.showLists == "False")):
