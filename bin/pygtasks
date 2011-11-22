@@ -25,6 +25,7 @@
 # stdlib libraries
 import sys
 import os
+import logging
 from optparse import OptionParser
 
 # Setup our path, if this is running from the src directory
@@ -39,41 +40,56 @@ from pygtasks import pygtask
 
 
 ##== Setup
+logger = logging.getLogger('pygtasks')
 
-# We'll put this first, so we can parse before constructing the [would be] client
-parser = OptionParser()
-parser.add_option("-L", dest="showLists", default="False",
-                 action="store_true", help="Display the task lists available")
-parser.add_option("-l", "--list", dest="selectedList", default="False",
-                 action="store", type="string", help="Select List. Use -L to see lists available,\
-		 or say \"all\" to view everything. Default is your default task list.")
-parser.add_option("-c", "--color", dest="color", default="False",
-                 action="store_true", help="Colored Output")
-parser.add_option("-d", "--debug", dest="debug", default="False",
-                 action="store_true", help="enable debugging output")
-(options, args) = parser.parse_args()
 
-# Gather the user config, and reach out to Google.
-service = pygservice().start()
+##== Functions
+def parse_args(args):
+    # We'll put this first, so we can parse before constructing the [would be] client
+    parser = OptionParser()
+    parser.add_option("-L", dest="showLists", default=False,
+                    action="store_true", help="Display the task lists available")
+    parser.add_option("-l", "--list", dest="selectedList", default=False,
+                    action="store", type="string", help="Select List. Use -L to see lists available,\
+		    or say \"all\" to view everything. Default is your default task list.")
+    parser.add_option("-c", "--color", dest="color", default=False,
+                    action="store_true", help="Colored Output")
+    parser.add_option("-d", "--debug", dest="debug", default=False,
+                    action="store_true", help="enable debugging output")
+    return parser.parse_args(args)
 
-##== Main
+def findIndentation(tasks, task):
+    if not task.has_key('parent'):
+        return 0
 
+    def m(t):
+        return t['id'] == task['parent']
+
+    return findIndentation(tasks, filter(m,tasks)[0]) + 1
+    
 def get_tasklist_id_by_title(items, title):
     for item in items:
         if item['title'] == title:
             return item['id']
 
+def main(args):
 
-if __name__ == '__main__':
+    # Gather the user config, and reach out to Google.
+    service = pygservice().start()
+
+    (options, args) = parse_args(args)
+
+    if options.debug:
+        logger.setLevel(logging.DEBUG)
+
+
+    logger.debug("foo")
+
     normal = '\033[1;m'
     bcyan = normal
     cyan = normal
     
-    if options.debug == True:
-        import pprint
-        pp = pprint.PrettyPrinter(indent=4)
-
-    if options.color == True:
+    if options.color:
         bcyan = '\033[1;36m'
         cyan = '\033[0;36m'
     
@@ -107,25 +123,22 @@ if __name__ == '__main__':
     # http://docs.python.org/library/string.html#template-strings
 
     # Default is to show @default list
-    if ((options.selectedList == "False") and (options.showLists == "False")):
+    if (not options.selectedList and not options.showLists):
         # Get the default list
         tasklist = service.tasklists().get(tasklist='@default').execute()
-        if options.debug == True: pp.pprint(tasklist)
+        logger.debug(tasklist)
 
         tasks = service.tasks().list(tasklist=tasklist['id']).execute()
-        if options.debug == True: pp.pprint(tasks)
+        logger.debug(tasks)
 
         print cyan + tasklist['title'] + normal
     
-        # XXX vbatts hacking
-        if options.debug == True: tasks_array = []
         for task in tasks['items']:
-            # XXX vbatts hacking
-            if options.debug == True: tasks_array.append(pygtask(task))
             if task['title'] != '':
-                print task['title']
+                ident = findIndentation(tasks['items'], task)
+                print "  "*ident + task['title']
     
-        if options.debug == True: pp.pprint(tasks_array)
+        logger.debug(tasks['items'])
     else:
         # Print a list header
         if options.selectedList == "all" or options.showLists == True:
@@ -134,7 +147,7 @@ if __name__ == '__main__':
     
         # Get the list
         tasklists = service.tasklists().list().execute()
-        if options.debug == True: pp.pprint(tasklists)
+        logger.debug(tasklists)
 
         # Otherwise, iterate
         for tasklist in tasklists['items']:
@@ -144,19 +157,17 @@ if __name__ == '__main__':
     
             if options.selectedList == tasklist['title'] or options.selectedList == "all":
                 tasks = service.tasks().list(tasklist=tasklist['id']).execute()
-                if options.debug == True: pp.pprint(tasks)
+                logger.debug(tasks)
 
                 print cyan + tasklist['title'] + normal
     
-                # XXX vbatts hacking
-                if options.debug == True: tasks_array = []
                 for task in tasks['items']:
-                # XXX vbatts hacking
-                    if options.debug == True: tasks_array.append(pygtask(task))
                     if task['title'] != '':
-                        print task['title']
-    
-                if options.debug == True: pp.pprint(tasks_array)
+                        ident = findIndentation(tasks['items'], task)
+                        print "  "*ident + task['title']
 
             print
 
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
